@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор стоимости динозавров ARK</title>
+    <style>
+        :root {
+            --bg-color: #12181f;
+            --card-bg: #1e2836;
+            --accent-color: #00d26a;
+            --text-color: #f0f4f8;
+            --text-dim: #9fb3c8;
+            --border-color: #2d3d52;
+            --input-bg: #151d28;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .calculator-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #fff;
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+
+        .mode-switch {
+            display: flex;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background-color: var(--accent-color);
+            color: #12181f;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 6px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .result-box {
+            margin-top: 24px;
+            background: linear-gradient(135deg, #1a2e26 0%, #15222e 100%);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .result-title {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-top: 4px;
+        }
+
+        .note {
+            font-size: 0.85rem;
+            color: #e2a03f;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <h2>Калькулятор Дино</h2>
+
+    <div class="mode-switch">
+        <button id="btn-mutated" class="mode-btn active" onclick="setMode('mutated')">Мутированные дино</button>
+        <button id="btn-normal" class="mode-btn" onclick="setMode('normal')">Обычные дино</button>
+    </div>
+
+    <div class="form-group">
+        <label for="dino-select">Выберите динозавра:</label>
+        <select id="dino-select" onchange="calculatePrice()">
+            <option value="acro">Акрокантозавр (120 КП/поинт)</option>
+            <option value="mantis">Богомол (250 КП/поинт)</option>
+            <option value="boar">Боаратос (150 КП/поинт)</option>
+            <option value="wyvern">Виверна (150 КП/поинт)</option>
+            <option value="giga">Гиганотозавр (1000 КП/поинт)</option>
+            <option value="deino_s">Дейнозух (130 КП/поинт)</option>
+            <option value="deino_n">Дейноних (250 КП/поинт)</option>
+            <option value="reaper">Жнец (100 КП/поинт)</option>
+            <option value="karkinos">Каркинос (230 КП/поинт)</option>
+            <option value="carcha">Кархародонтозавр (до 80 — 1000, выше 80 — 1500 КП)</option>
+            <option value="mana">Манагарм (200 КП/поинт)</option>
+            <option value="megatherium">Мегатерий (150 КП/поинт)</option>
+            <option value="ossidon">Оссидон (130 КП/поинт)</option>
+            <option value="rhyniognatha">Риниогната (300 КП/поинт)</option>
+            <option value="drake">Скальный Дрейк (150 КП/поинт)</option>
+            <option value="tidepup">Тайдпап (250 КП/поинт)</option>
+            <option value="shadowmane">Тенегрив (180 КП/поинт)</option>
+            <option value="therizino">Теризинозавр (300 КП/поинт)</option>
+            <option value="rex">Тираннозавр (100 КП/поинт)</option>
+            <option value="ocean">Тусотеутис/Базилозавр (200 КП/поинт)</option>
+            <option value="umbra">Умбра/Люмина (300 КП/поинт)</option>
+            <option value="cerberus">Цербер (300 КП/поинт)</option>
+            <option value="farm">Фарм дино (от 150 КП/поинт)</option>
+            <option value="other">Остальные дино (от 100 КП/поинт)</option>
+        </select>
+    </div>
+
+    <div class="stats-grid">
+        <div class="form-group">
+            <label for="hp">Здоровье (ХП):</label>
+            <input type="number" id="hp" value="0" min="0" oninput="calculatePrice()">
+        </div>
+        <div class="form-group">
+            <label for="stamina">Стамина:</label>
+            <input type="number" id="stamina" value="0" min="0" oninput="calculatePrice()">
+        </div>
+        <div class="form-group">
+            <label for="weight">Вес:</label>
+            <input type="number" id="weight" value="0" min="0" oninput="calculatePrice()">
+        </div>
+        <div class="form-group">
+            <label for="damage">Урон:</label>
+            <input type="number" id="damage" value="0" min="0" oninput="calculatePrice()">
+        </div>
+        <div class="form-group">
+            <label for="food">Еда:</label>
+            <input type="number" id="food" value="0" min="0" oninput="calculatePrice()">
+        </div>
+        <div class="form-group">
+            <label for="oxygen">Кислород:</label>
+            <input type="number" id="oxygen" value="0" min="0" oninput="calculatePrice()">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="special">Спец стат:</label>
+        <input type="number" id="special" value="0" min="0" oninput="calculatePrice()">
+    </div>
+
+    <div class="result-box">
+        <div class="result-title">Итоговая стоимость</div>
+        <div class="result-value" id="total-price">0 КП</div>
+        <div id="note" class="note">Режим: Мутированные (учитываются статы от 90 поинтов)</div>
+    </div>
+</div>
+
+<script>
+    let currentMode = 'mutated';
+
+    const dinoRates = {
+        acro: 120,
+        mantis: 250,
+        boar: 150,
+        wyvern: 150,
+        giga: 1000,
+        deino_s: 130,
+        deino_n: 250,
+        reaper: 100,
+        karkinos: 230,
+        carcha: "custom",
+        mana: 200,
+        megatherium: 150,
+        ossidon: 130,
+        rhyniognatha: 300,
+        drake: 150,
+        tidepup: 250,
+        shadowmane: 180,
+        therizino: 300,
+        rex: 100,
+        ocean: 200,
+        umbra: 300,
+        cerberus: 300,
+        farm: 150,
+        other: 100
+    };
+
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('btn-mutated').classList.toggle('active', mode === 'mutated');
+        document.getElementById('btn-normal').classList.toggle('active', mode === 'normal');
+        
+        const noteElement = document.getElementById('note');
+        if (mode === 'mutated') {
+            noteElement.innerText = "Режим: Мутированные (самый высокий стат 100%, доп. статы ≥90 считаются по 10%)";
+        } else {
+            noteElement.innerText = "Режим: Обычные дино (считается только один наивысший стат)";
+        }
+
+        calculatePrice();
+    }
+
+    function calculatePrice() {
+        const dinoType = document.getElementById('dino-select').value;
+        
+        const stats = [
+            parseInt(document.getElementById('hp').value) || 0,
+            parseInt(document.getElementById('stamina').value) || 0,
+            parseInt(document.getElementById('weight').value) || 0,
+            parseInt(document.getElementById('damage').value) || 0,
+            parseInt(document.getElementById('food').value) || 0,
+            parseInt(document.getElementById('oxygen').value) || 0,
+            parseInt(document.getElementById('special').value) || 0
+        ];
+
+        let totalPrice = 0;
+
+        if (currentMode === 'normal') {
+            // --- РЕЖИМ: ОБЫЧНЫЕ ДИНО (берется ТОЛЬКО ОДИН самый высокий стат со всех полей) ---
+            const maxStat = Math.max(...stats);
+
+            if (maxStat > 0) {
+                if (dinoType === 'carcha') {
+                    const rate = maxStat > 80 ? 1500 : 1000;
+                    totalPrice = maxStat * rate;
+                } else {
+                    const rate = dinoRates[dinoType];
+                    totalPrice = maxStat * rate;
+                }
+            }
+
+        } else {
+            // --- РЕЖИМ: МУТИРОВАННЫЕ ДИНО (правило 90+ поинтов) ---
+            const validStats = stats.filter(stat => stat >= 90);
+
+            if (validStats.length > 0) {
+                validStats.sort((a, b) => b - a);
+
+                const highestStat = validStats[0];
+                const remainingStats = validStats.slice(1);
+
+                if (dinoType === 'carcha') {
+                    const primaryRate = highestStat > 80 ? 1500 : 1000;
+                    totalPrice += highestStat * primaryRate;
+
+                    remainingStats.forEach(stat => {
+                        const secondaryRate = stat > 80 ? 1500 : 1000;
+                        totalPrice += stat * (secondaryRate * 0.10);
+                    });
+                } else {
+                    const rate = dinoRates[dinoType];
+                    
+                    totalPrice += highestStat * rate;
+
+                    const discountRate = rate * 0.10;
+                    remainingStats.forEach(stat => {
+                        totalPrice += stat * discountRate;
+                    });
+                }
+            }
+        }
+
+        document.getElementById('total-price').innerText = totalPrice.toLocaleString('ru-RU') + " КП";
+    }
+
+    calculatePrice();
+</script>
+
+</body>
+</html>
